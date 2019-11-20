@@ -6,7 +6,7 @@ let svg = d3.select("svg"),
     width = + parseInt(svg.style("width")) - margin.left - margin.right,
     height = + parseInt(svg.style("height")) - margin.top - margin.bottom;
 
-points = d3.range(3,39).map( function(i) { return [i/3,100];});
+points = d3.range(3,39).map( function(i) { return [i,i];});
 
 // axis drawing
 let x = d3.scaleLinear().rangeRound([0, width]);
@@ -20,11 +20,6 @@ let line = d3.area()
     .y1(function(d) { return y(d[1]); })
     .y0(height)
     .curve(d3.curveMonotoneX); // apply smoothing to the line
-
-let drag = d3.drag()
-    .on('start', dragstarted)
-    .on('drag', dragged)
-    .on('end', dragended);
 
 /*
 //Adjusts cursor
@@ -42,6 +37,16 @@ let focus = svg.append("g")
 
 x.domain(d3.extent(points, function(d) { return d[0]; }));
 //y.domain(d3.extent(points, function(d) { return d[1]; }));
+
+
+focus.append("path")
+    .datum(points)
+    .attr("fill", "none")
+    .attr("stroke", "steelblue")
+    .attr("stroke-linejoin", "round")
+    .attr("stroke-linecap", "round")
+    .attr("stroke-width", 1.5)
+    .attr("d", line);
 
 
 focus.append("path")
@@ -65,7 +70,7 @@ focus.selectAll('circle')
     .style('cursor', 'pointer')
     .style('fill', 'steelblue');
 
-focus.selectAll('circle').call(drag);
+
 
 focus.append('g')
     .attr('class', 'axis axis--x')
@@ -78,6 +83,14 @@ focus.append('g')
 
 
 
+
+let drag = d3.drag()
+    .on('start', dragstarted)
+    .on('drag', dragged)
+    .on('end', dragended);
+
+
+focus.selectAll('circle').call(drag);
 
 
 //Drag functions
@@ -99,7 +112,6 @@ function dragended(d) {
 }
 
 
-
 // text label for the x axis
 svg.append("text")
     .attr("transform", "translate(" + (width/2) + " ," + (height + margin.top + 30) + ")")
@@ -114,3 +126,5 @@ svg.append("text")
     .attr("dy", "1em")
     .style("text-anchor", "middle")
     .text("Energy (% - AVG)");
+
+
